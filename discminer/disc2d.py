@@ -801,7 +801,7 @@ class Mcmc:
             else: raise InputError(mc_params, 'Wrong input parameters. Base keys in mc_params must be categories; parameters of a category must be within a dictionary as well.')
 
         return header, kind, len(header), boundaries_list, params_indices
-    
+    from . import constants as sfc
     @staticmethod
     def plot_walkers(samples, best_params, nstats=None, header=None, kind=None, tag=''):
         npars, nsteps, nwalkers = samples.shape
