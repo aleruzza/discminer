@@ -121,19 +121,28 @@ class Emulator:
         self.device = device
         self.emulators = {}
         self.ict_gen = ict_gen
+        self.max_image_size = 0
         for i, key in enumerate(labels):
             params = load_params(model_params[i])
+            if params['image_size'] > self.max_image_size:
+                self.max_image_size = params['image_size']
             self.emulators[key] = BaseEmulator(model_pths[i], params, device=self.device, norm_func=norm_funcs[i])
 
 
     def emulate(self, alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['dens', 'vphi', 'vr']):
-        ic = self.ict_gen(
-            slopes=np.array([sigmaSlope]), dimension=self.params[0]["image_size"]
-        )
+        
         params_l = np.array([planetMass, h, alpha, flaringIndex]).reshape(1, 4)
         norm_params = norm_labels(params_l)
         result = []
+        
+        ic = self.ict_gen(
+            slopes=np.array([sigmaSlope]), dimension=self.max_image_size
+        )
+        
         for i, key in enumerate(fields):
+            if self.emulators[key].params['image_size'] < self.max_image_size:
+                #TODO: implement interpolation to smaller size. For now just use the same size for all fields.
+                raise NotImplementedError()
             result.append(self.emulators[key](ic[:, [i]], norm_params).detach())
         return torch.concatenate(result, axis=1)
 
