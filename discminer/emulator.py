@@ -126,7 +126,7 @@ class Emulator:
             self.emulators[key] = BaseEmulator(model_pths[i], params, device=self.device, norm_func=norm_funcs[i])
 
 
-    def emulate(self, alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['dens', 'vr', 'vphi']):
+    def emulate(self, alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['dens', 'vphi', 'vr']):
         ic = self.ict_gen(
             slopes=np.array([sigmaSlope]), dimension=self.params[0]["image_size"]
         )
@@ -192,9 +192,9 @@ class Emulator:
 
         rr = hypot_func(xx, yy)
         pp = np.arctan2(yy, xx)
-        rr_dom = rr[(rr > 0.5) & (rr < 2.9)] * R_p
-        pp_dom = self.per_b(pp[(rr > 0.5) & (rr < 2.9)] + phi_p)
-        v3d_dom = v3d[:, (rr > 0.5) & (rr < 2.9)]
+        rr_dom = rr[(rr > 0.4) & (rr < 3)] * R_p
+        pp_dom = self.per_b(pp[(rr > 0.4) & (rr < 3)] + phi_p)
+        v3d_dom = v3d[:, (rr > 0.4) & (rr < 3)]
         x_dom = rr_dom * np.cos(pp_dom)
         y_dom = rr_dom * np.sin(pp_dom)
 
