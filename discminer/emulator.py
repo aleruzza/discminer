@@ -231,7 +231,7 @@ class Emulator:
                 * np.sqrt(G * Mstar * u.MSun / R_p)
             )
             * 1e-3 #this is because we use km 
-            * v_sign
+            * v_sign * (-1) #the -1 is there to get the right interpolation
         )
         vr_interp = (
             griddata((x_dom, y_dom), v3d_dom[1].reshape(-1), (coord["x"], coord["y"]))
