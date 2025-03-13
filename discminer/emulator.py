@@ -68,7 +68,8 @@ def generate_ict_128x128_disc(slopes, dimension, nonorm=False):
         ict = np.float32(ict)
     ict = np.expand_dims(ict, axis=1)
     return ict
-
+xy = np.linspace(-3,3,256)
+xx, yy = np.meshgrid(xy, xy)
 
 def norm_labels(labels):
     # ['PlanetMass', 'AspectRatio', 'Alpha',  'FlaringIndex']
@@ -105,6 +106,9 @@ class BaseEmulator:
         ic = torch.tensor(ic, dtype=torch.float32, device=self.device)
         emulation = self.emulator(ic, labels)
         return self.norm_func(emulation)
+    
+    def __call__(self, ic, labels):
+        return self.emulate(ic, labels)
 
 
 class Emulator:
@@ -116,12 +120,14 @@ class Emulator:
         labels=["dens", "vphi", "vr", "vz"],
         device="cpu",
         ict_gen=generate_ict_128x128_disc_tri,
+        ict_comp_dict = {'dens':0, 'vphi':1 , 'vr': 2},
         norm_funcs = [None, None, None, None]
     ):
         self.device = device
         self.emulators = {}
         self.ict_gen = ict_gen
         self.max_image_size = 0
+        self.ict_comp_dict = ict_comp_dict
         for i, key in enumerate(labels):
             params = load_params(model_params[i])
             if params['image_size'] > self.max_image_size:
@@ -143,8 +149,8 @@ class Emulator:
             if self.emulators[key].params['image_size'] < self.max_image_size:
                 #TODO: implement interpolation to smaller size. For now just use the same size for all fields.
                 raise NotImplementedError()
-            result.append(self.emulators[key](ic[:, [i]], norm_params).detach())
-        return torch.concatenate(result, axis=1)
+            result.append(self.emulators[key](ic[:, [self.ict_comp_dict[key]]], norm_params).detach()[0])
+        return torch.concatenate(result, axis=0)
 
 
     def emulate_dens(self, alpha, h, planetMass, sigmaSlope, flaringIndex):
@@ -195,8 +201,8 @@ class Emulator:
         )
         v3d = v3d[:, :, ::-1]
 
-        x = np.linspace(-3, 3, self.params[0]["image_size"])
-        y = np.linspace(-3, 3, self.params[0]["image_size"])
+        x = np.linspace(-3, 3, self.max_image_size)
+        y = np.linspace(-3, 3, self.max_image_size)
         xx, yy = np.meshgrid(x, y)
 
         rr = hypot_func(xx, yy)
@@ -224,13 +230,12 @@ class Emulator:
                 )
                 * np.sqrt(G * Mstar * u.MSun / R_p)
             )
-            * 1e-3
-            * (-1)
+            * 1e-3 #this is because we use km 
             * v_sign
         )
         vr_interp = (
             griddata((x_dom, y_dom), v3d_dom[1].reshape(-1), (coord["x"], coord["y"]))
-            * 1e-3
+            * 1e-3 * np.sqrt(G * Mstar * u.MSun / R_p)
         )
 
         mask = (R > 2.9 * R_p) | (R < 0.5 * R_p)
