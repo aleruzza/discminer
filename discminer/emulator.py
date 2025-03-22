@@ -135,12 +135,24 @@ class Emulator:
             self.emulators[key] = BaseEmulator(model_pths[i], params, device=self.device, norm_func=norm_funcs[i])
 
 
-    def emulate(self, alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['dens', 'vphi', 'vr']):
+    def emulate(self, alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['dens', 'vphi', 'vr'], norm=True):
         
         params_l = np.array([planetMass, h, alpha, flaringIndex]).reshape(1, 4)
-        norm_params = norm_labels(params_l)
-        result = []
         
+        if norm:
+            norm_params = norm_labels(params_l)
+        else:
+            norm_params = params_l
+            sigmaSlope = (sigmaSlope+1)*(1.2-0.5)/2 + 0.5
+        
+        return self.emulate_normparams(norm_params=norm_params, sigmaSlope=sigmaSlope, fields=fields)
+        
+    
+    
+    def emulate_normparams(self, norm_params, sigmaSlope, fields=['dens', 'vphi', 'vr']):
+        
+        result = []
+    
         ic = self.ict_gen(
             slopes=np.array([sigmaSlope]), dimension=self.max_image_size
         )
@@ -180,6 +192,7 @@ class Emulator:
         R_p,
         phi_p,
         extrap_vfunc,
+        norm=True,
         **extrap_kwargs,
     ):
 
@@ -195,7 +208,7 @@ class Emulator:
             v_sign = 1
 
         v3d = (
-            self.emulate(alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['vphi', 'vr'])
+            self.emulate(alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['vphi', 'vr'], norm=norm)
             .detach()
             .numpy()
         )
