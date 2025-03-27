@@ -1298,7 +1298,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                     allerrpos.append(errpos[attribute][par])
         
             #print (allheader, allpars)
-            np.savetxt('log_pars_%s_cube_%dwalkers_%dsteps.txt'%(tag, nwalkers, backend.iteration),
+            #np.savetxt('log_pars_%s_cube_%dwalkers_%dsteps.txt'%(tag, nwalkers, backend.iteration),
                        np.array([allp0, allpars, allerrneg, allerrpos]), fmt='%.6f', header=str(allheader))
             
             
