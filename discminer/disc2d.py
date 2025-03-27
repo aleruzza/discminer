@@ -891,7 +891,7 @@ class Mcmc:
         snapshot = tracemalloc.take_snapshot()
         top_stats = snapshot.statistics("lineno")
         # Print the top memory-consuming lines
-        print(f"Memory usage of {func.__name__}:")
+        print(f"Memory usage:")
         for stat in top_stats[:5]:
             print(stat)
         return lnx2 if np.isfinite(lnx2) else -np.inf
