@@ -888,13 +888,6 @@ class Mcmc:
             lnx =  np.where(mask, np.power((data - model)/self.noise_stddev, 2), 0) 
             lnx2 += -0.5 * np.sum(lnx)
         
-        snapshot = tracemalloc.take_snapshot()
-        top_stats = snapshot.statistics("lineno")
-        # Print the top memory-consuming lines
-        print(f"Memory usage:")
-        for stat in top_stats[:20]:
-            print(stat)
-        
         return lnx2 if np.isfinite(lnx2) else -np.inf
     
 
@@ -1123,7 +1116,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
        
         """        
         
-        tracemalloc.start()
+        
         if data is None and vchannels is None:
             self.mc_data = self.datacube.data
             self.mc_vchannels = self.vchannels
