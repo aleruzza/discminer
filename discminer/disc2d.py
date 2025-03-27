@@ -12,6 +12,7 @@ import pprint
 import sys
 import time
 import warnings
+import tracemalloc
 from multiprocessing import Pool
 
 import matplotlib
@@ -32,6 +33,8 @@ from .core import ModelGrid
 from .cube import Cube
 from .rail import Contours
 from .grid import GridTools
+
+from trace_memory import measure_memory_usage
 
 os.environ["OMP_NUM_THREADS"] = "1"
 
@@ -866,6 +869,7 @@ class Mcmc:
         corner.corner(samples, labels=labels, title_fmt='.4f', bins=30,
                       quantiles=quantiles, show_titles=True)
     
+    @measure_memory_usage
     def ln_likelihood(self, new_params, **kwargs):
         for i in range(self.mc_nparams):
             if not (self.mc_boundaries_list[i][0] < new_params[i] < self.mc_boundaries_list[i][1]): return -np.inf
