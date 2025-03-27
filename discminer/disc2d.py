@@ -1269,16 +1269,20 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
             errneg = cp(self.params)
 
             #print (self.best_fit_dict)
+            
             for key in self.best_fit_dict: 
-                par = key.split('_')[0]
-                attribute = key.split(par+'_')[1]
-                val = self.best_fit_dict[key].split(',')
+                try:
+                    par = key.split('_')[0]
+                    attribute = key.split(par+'_')[1]
+                    val = self.best_fit_dict[key].split(',')
 
-                p0pars[attribute][par] = float(val[0])
-                params[attribute][par] = float(val[1])
-                errneg[attribute][par] = float(val[2])        
-                errpos[attribute][par] = float(val[3])    
-
+                    p0pars[attribute][par] = float(val[0])
+                    params[attribute][par] = float(val[1])
+                    errneg[attribute][par] = float(val[2])        
+                    errpos[attribute][par] = float(val[3])    
+                except KeyError:
+                    print(f'key error {key}')
+                    continue
             allheader = []
             allp0 = []
             allpars = []
