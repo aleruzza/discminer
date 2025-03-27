@@ -34,8 +34,6 @@ from .cube import Cube
 from .rail import Contours
 from .grid import GridTools
 
-from .trace_memory import measure_memory_usage
-
 os.environ["OMP_NUM_THREADS"] = "1"
 
 __all__ = ['Model', 'Mcmc', 'Velocity', 'Intensity', 'Linewidth', 'Lineslope', 'ScaleHeight', 'SurfaceDensity', 'Temperature']
@@ -869,8 +867,9 @@ class Mcmc:
         corner.corner(samples, labels=labels, title_fmt='.4f', bins=30,
                       quantiles=quantiles, show_titles=True)
     
-    @measure_memory_usage
+    
     def ln_likelihood(self, new_params, **kwargs):
+
         for i in range(self.mc_nparams):
             if not (self.mc_boundaries_list[i][0] < new_params[i] < self.mc_boundaries_list[i][1]): return -np.inf
             else: self.params[self.mc_kind[i]][self.mc_header[i]] = new_params[i]
@@ -888,7 +887,13 @@ class Mcmc:
             mask = np.logical_and(mask_data, mask_model)
             lnx =  np.where(mask, np.power((data - model)/self.noise_stddev, 2), 0) 
             lnx2 += -0.5 * np.sum(lnx)
-            
+        
+        snapshot = tracemalloc.take_snapshot()
+        top_stats = snapshot.statistics("lineno")
+        # Print the top memory-consuming lines
+        print(f"Memory usage of {func.__name__}:")
+        for stat in top_stats[:5]:
+            print(stat)
         return lnx2 if np.isfinite(lnx2) else -np.inf
     
 
@@ -1116,6 +1121,8 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
             Fraction of MCMC steps at the end of the parameter chains considered for the computation of best-fit parameters (Defaults to 0.2, i.e. 20).
        
         """        
+        
+        tracemalloc.start()
         if data is None and vchannels is None:
             self.mc_data = self.datacube.data
             self.mc_vchannels = self.vchannels
