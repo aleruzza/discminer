@@ -34,7 +34,7 @@ from .cube import Cube
 from .rail import Contours
 from .grid import GridTools
 
-from trace_memory import measure_memory_usage
+from .trace_memory import measure_memory_usage
 
 os.environ["OMP_NUM_THREADS"] = "1"
 

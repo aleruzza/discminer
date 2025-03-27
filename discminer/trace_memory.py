@@ -1,11 +1,11 @@
 import tracemalloc
 
 def measure_memory_usage(func):
-    def wrapper(*args, **kwargs):
+    def wrapper(self, *args, **kwargs):
         tracemalloc.start()
-
+        self.wrapper = "I'm a wrapper"
         # Call the original function
-        result = func(*args, **kwargs)
+        result = func(self, *args, **kwargs)
 
         snapshot = tracemalloc.take_snapshot()
         top_stats = snapshot.statistics("lineno")
