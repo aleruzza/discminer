@@ -735,13 +735,13 @@ class Intensity:
 
             if self.beam_kernel is not None:
                 if make_convolve:
-                    int2d_full[np.isnan(int2d_full)] = noise
+                    int2d_full[np.isnan(int2d_full)] = noise[np.isnan(int2d_full)]
                     int2d_full = self.beam_area*convolve(int2d_full, self.beam_kernel, preserve_nan=False)
                 else:
                     int2d_full *= self.beam_area
-                    int2d_full[~np.isfinite(int2d_full)] = noise
+                    int2d_full[~np.isfinite(int2d_full)] = noise[~np.isfinite(int2d_full)]
             else:
-                int2d_full[~np.isfinite(int2d_full)] = noise
+                int2d_full[~np.isfinite(int2d_full)] = noise[~np.isfinite(int2d_full)]
                 
             cube.append(int2d_full)
             
