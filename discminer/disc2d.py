@@ -732,6 +732,8 @@ class Intensity:
             if rms is not None:
                 noise = np.random.normal(scale=rms, size=int2d_shape)
                 int2d_full += noise
+            else:
+                noise = np.zeros(int2d_shape)
 
             if self.beam_kernel is not None:
                 if make_convolve:
