@@ -1,7 +1,10 @@
 *~
 *.c
 *.pyc
+<<<<<<< HEAD
 *.pth
+=======
+>>>>>>> new_interp_strategy_pr
 *.fits
 *.dat
 *.log
