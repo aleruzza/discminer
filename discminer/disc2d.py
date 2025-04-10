@@ -19,6 +19,7 @@ import matplotlib
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 import numpy as np
+import h5py
 
 from astropy.convolution import Gaussian2DKernel, convolve
 from astropy import units as u
@@ -61,6 +62,22 @@ def _compute_prop_standard(grid, prop_funcs, prop_kwargs):
         coord = {'x': x, 'y': y, 'z': z, 'phi': phi, 'R': R, 'R_1d': R_1d, 'z_1d': z_1d}
         for i in range(n_funcs): props[i][side] = prop_funcs[i](coord, **prop_kwargs[i])
     return props
+
+def init_h5_file(filename, dataset_name, single_data_shape):
+    with h5py.File(filename, 'w') as f:
+        f.create_dataset(
+            dataset_name,
+            shape=(0, *single_data_shape),
+            maxshape=(None, *single_data_shape),
+            dtype='float64'
+        )
+        
+def append_data_to_h5(filename, dataset_name, data):
+    with h5py.File(filename, 'a') as f:
+        dset = f[dataset_name]
+        dset.resize((dset.shape[0] + 1), axis=0)
+        dset[-1] = data
+        f.flush()
 
 def _compute_prop_mirror(grid, prop_funcs, prop_kwargs):
     n_funcs = len(prop_funcs)
@@ -874,6 +891,7 @@ class Mcmc:
     
     
     def ln_likelihood(self, new_params, **kwargs):
+        
 
         for i in range(self.mc_nparams):
             if not (self.mc_boundaries_list[i][0] < new_params[i] < self.mc_boundaries_list[i][1]): return -np.inf
@@ -883,6 +901,8 @@ class Mcmc:
 
         lnx2=0    
         model_cube = self.get_cube(self.mc_vchannels, vel2d, int2d, linew2d, lineb2d, return_data_only=True)
+        append_data_to_h5('mcmc_models.h5', 'mcmc_models', model_cube)
+        
         for i in range(self.mc_nchan):
             model_chan = model_cube[i]
             mask_data = np.isfinite(self.mc_data[i])
@@ -1120,6 +1140,8 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
        
         """        
         
+        ### create files for debugging
+        init_h5_file('mcmc_models.h5', 'mcmc_models', (self.datacube.data.shape))
         
         if data is None and vchannels is None:
             self.mc_data = self.datacube.data
