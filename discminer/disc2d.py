@@ -1140,7 +1140,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
         if z_mirror: 
             for key in self.mc_params['height_lower']: self.mc_params['height_lower'][key] = 'height_upper_mirror'
         self.mc_header, self.mc_kind, self.mc_nparams, self.mc_boundaries_list, self.mc_params_indices = Model._get_params2fit(self.mc_params, self.mc_boundaries)
-        self.params = copy.deepcopy(self.mc_params)
+        #self.params = copy.deepcopy(self.mc_params)
 
         if isinstance(p0_mean, (list, tuple, np.ndarray)): 
             if len(p0_mean) != self.mc_nparams: raise InputError(p0_mean, 'Length of input p0_mean must be equal to the number of parameters to fit: %d'%self.mc_nparams)
