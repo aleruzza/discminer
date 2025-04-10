@@ -1143,6 +1143,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
         ### create files for debugging
         init_h5_file('mcmc_models.h5', 'mcmc_models', (self.datacube.data.shape))
         
+        
         if data is None and vchannels is None:
             self.mc_data = self.datacube.data
             self.mc_vchannels = self.vchannels
@@ -1153,6 +1154,9 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
             raise InputError((data, vchannels),
                              'Please specify both data AND vchannel slices you wish to consider for the MCMC sampling.')
             
+        init_h5_file('mcmc_data.h5', 'mcmc_data', (self.mc_data.shape))
+        append_data_to_h5('mcmc_data.h5', 'mcmc_data', self.mc_data)
+        
         self.mc_nchan = len(vchannels)
         self.noise_stddev = noise_stddev
         if use_zeus: import zeus as sampler_id
