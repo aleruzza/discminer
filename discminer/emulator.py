@@ -68,8 +68,7 @@ def generate_ict_128x128_disc(slopes, dimension, nonorm=False):
         ict = np.float32(ict)
     ict = np.expand_dims(ict, axis=1)
     return ict
-xy = np.linspace(-3,3,256)
-xx, yy = np.meshgrid(xy, xy)
+
 
 def norm_labels(labels):
     # ['PlanetMass', 'AspectRatio', 'Alpha',  'FlaringIndex']
@@ -119,8 +118,8 @@ class Emulator:
         model_params=[],
         labels=["dens", "vphi", "vr", "vz"],
         device="cpu",
-        ict_gen=generate_ict_128x128_disc_tri,
-        ict_comp_dict = {'dens':0, 'vphi':1 , 'vr': 2},
+        ict_gen=generate_ict_128x128_disc,
+        ict_comp_dict = {'dens':0, 'vphi':0 , 'vr': 0},
         norm_funcs = [None, None, None, None]
     ):
         self.device = device
