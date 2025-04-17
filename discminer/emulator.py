@@ -186,11 +186,11 @@ class Emulator:
         alpha,
         h,
         planetMass,
-        sigmaSlope,
         flaringIndex,
         R_p,
         phi_p,
         extrap_vfunc,
+        sigmaSlope=None,
         norm=True,
         **extrap_kwargs,
     ):
@@ -206,6 +206,9 @@ class Emulator:
         else:
             v_sign = 1
 
+        if sigmaSlope==None:
+            sigmaSlope = 2*flaringIndex + 0.5
+            
         v3d = (
             self.emulate(alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['vphi', 'vr'], norm=norm)
             .detach()
