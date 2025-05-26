@@ -207,7 +207,10 @@ class Emulator:
             v_sign = 1
 
         if sigmaSlope==None:
-            sigmaSlope = 2*flaringIndex + 0.5
+            if norm:
+                sigmaSlope = 2*flaringIndex + 0.5
+            else:
+                sigmaSlope = flaringIndex
             
         v3d = (
             self.emulate(alpha, h, planetMass, sigmaSlope, flaringIndex, fields=['vphi', 'vr'], norm=norm)
