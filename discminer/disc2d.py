@@ -1192,9 +1192,9 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                 sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
-                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune, moves=moves)
                 else:
-                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune, moves=moves)
                 end = time.time()
                 multi_time = end - start
                 print("MPI multiprocessing took {0:.1f} seconds".format(multi_time))
@@ -1204,9 +1204,9 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                 sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
-                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune, moves=moves)
                 else:
-                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune, moves=moves)
                 end = time.time()
                 multi_time = end - start
                 print("Multiprocessing took {0:.1f} seconds".format(multi_time))
