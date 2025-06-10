@@ -1096,6 +1096,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                  tag='',
                  mpi=False,
                  tune=False,
+                 moves=moves,
                  **kwargs_model): 
         """
         Optimise the discminer model parameters using an MCMC sampler.
