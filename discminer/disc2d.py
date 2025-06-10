@@ -1190,24 +1190,24 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                     pool.wait()
                     sys.exit(0)
                 
-                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model)                                                        
+                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model, moves=moves)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
-                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune, moves=moves)
+                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune )
                 else:
-                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune, moves=moves)
+                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune)
                 end = time.time()
                 multi_time = end - start
                 print("MPI multiprocessing took {0:.1f} seconds".format(multi_time))
 
         else:
             with Pool(processes=nthreads) as pool:
-                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model)                                                        
+                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model, moves=moves)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
-                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune, moves=moves)
+                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune)
                 else:
-                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune, moves=moves)
+                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune)
                 end = time.time()
                 multi_time = end - start
                 print("Multiprocessing took {0:.1f} seconds".format(multi_time))
