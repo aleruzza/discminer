@@ -208,6 +208,7 @@ class Emulator:
 
         if sigmaSlope==None:
             if norm:
+                print('using norm=True')
                 sigmaSlope = 2*flaringIndex + 0.5
             else:
                 sigmaSlope = flaringIndex
