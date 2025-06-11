@@ -211,6 +211,7 @@ class Emulator:
                 print('using norm=True')
                 sigmaSlope = 2*flaringIndex + 0.5
             else:
+                print('using norm=False')
                 sigmaSlope = flaringIndex
             
         v3d = (
