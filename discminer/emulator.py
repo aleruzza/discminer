@@ -196,7 +196,7 @@ class Emulator:
     ):
         
         for key, obj in extrap_kwargs.items():
-            if isinstance(obj, function):
+            if callable(obj):
                 extrap_kwargs[key] = obj(alpha=alpha, h=h, planetMass=planetMass, flaringIndex=flaringIndex, R_p=R_p, phi_p=phi_p, **extrap_kwargs)
 
         G = 6.67384e-11
