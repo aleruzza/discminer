@@ -194,11 +194,17 @@ class Emulator:
         norm=True,
         **extrap_kwargs,
     ):
+        
+        for key, obj in extrap_kwargs.items():
+            if isinstance(obj, function):
+                extrap_kwargs[key] = obj(alpha=alpha, h=h, planetMass=planetMass, flaringIndex=flaringIndex, R_p=R_p, phi_p=phi_p, **extrap_kwargs)
 
         G = 6.67384e-11
         if "Mstar" in extrap_kwargs.keys():
             Mstar = extrap_kwargs["Mstar"]
+            print(f"using star mass Mstar={Mstar} Msun")
         else:
+            print("using default star mass Mstar=1 Msun")
             Mstar = 1
 
         if "v_sign" in extrap_kwargs.keys():
