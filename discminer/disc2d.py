@@ -1086,7 +1086,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
     def run_mcmc(self, data=None, vchannels=None, p0_mean=[], frac_stddev=1e-3,  
                  nwalkers=30, nsteps=100, frac_stats=0.2, noise_stddev=1.0,
                  nthreads=None,
-                 backend=None, #emcee
+                 #backend=None, #emcee
                  use_zeus=False,
                  #custom_header={}, custom_kind={}, mc_layers=1,
                  z_mirror=False, 
