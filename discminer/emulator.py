@@ -202,9 +202,9 @@ class Emulator:
         G = 6.67384e-11
         if "Mstar" in extrap_kwargs.keys():
             Mstar = extrap_kwargs["Mstar"]
-            print(f"using star mass Mstar={Mstar} Msun")
+            #print(f"using star mass Mstar={Mstar} Msun")
         else:
-            print("using default star mass Mstar=1 Msun")
+            #print("using default star mass Mstar=1 Msun")
             Mstar = 1
 
         if "v_sign" in extrap_kwargs.keys():

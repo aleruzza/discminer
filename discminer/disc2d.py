@@ -1147,7 +1147,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
             constbackkwargs = {'backend': backend}
             runbackkwargs  = {'backend': backend}
         elif use_zeus:
-            callback = SaveProgressCallback(filename="chain.h5", ncheck=10)
+            callback = SaveProgressCallback(filename=name_back, ncheck=1)
             constbackkwargs = {}
             runbackkwargs = {'callbacks': [callback]}
             
