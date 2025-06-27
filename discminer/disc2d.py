@@ -1215,7 +1215,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
 
         else:
             with Pool(processes=nthreads) as pool:
-                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model, moves=moves)                                                        
+                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, kwargs=kwargs_model, moves=moves, **constbackkwarg)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
                     sampler.run_mcmc(None, nsteps, progress=True, **runbackkwargs)
