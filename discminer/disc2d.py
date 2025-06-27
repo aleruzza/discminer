@@ -1097,6 +1097,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                  mpi=False,
                  tune=False,
                  moves=None,
+                 name_back=None,
                  **kwargs_model): 
         """
         Optimise the discminer model parameters using an MCMC sampler.
@@ -1143,12 +1144,12 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
         
         #prepare backends
         if not use_zeus:
-            constbackkwarg = {'backend': backend}
+            constbackkwargs = {'backend': backend}
             runbackkwargs  = {'backend': backend}
         elif use_zeus:
             callback = SaveProgressCallback(filename="chain.h5", ncheck=10)
-            constbackkwarg = {}
-            runbackkwarg = {'callbacks': [callback]}
+            constbackkwargs = {}
+            runbackkwargs = {'callbacks': [callback]}
             
             
         kwargs_model.update({'z_mirror': z_mirror})
@@ -1203,7 +1204,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                     pool.wait()
                     sys.exit(0)
                 
-                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, kwargs=kwargs_model, moves=moves, **constbackkwarg)                                                        
+                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, kwargs=kwargs_model, moves=moves, **constbackkwargs)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
                     sampler.run_mcmc(None, nsteps, progress=True, **runbackkwargs)
@@ -1215,7 +1216,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
 
         else:
             with Pool(processes=nthreads) as pool:
-                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, kwargs=kwargs_model, moves=moves, **constbackkwarg)                                                        
+                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, kwargs=kwargs_model, moves=moves, **constbackkwargs)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
                     sampler.run_mcmc(None, nsteps, progress=True, **runbackkwargs)
