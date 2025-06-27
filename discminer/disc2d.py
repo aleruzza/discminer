@@ -1086,7 +1086,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
     def run_mcmc(self, data=None, vchannels=None, p0_mean=[], frac_stddev=1e-3,  
                  nwalkers=30, nsteps=100, frac_stats=0.2, noise_stddev=1.0,
                  nthreads=None,
-                 #backend=None, #emcee
+                 backend=None, #emcee
                  use_zeus=False,
                  #custom_header={}, custom_kind={}, mc_layers=1,
                  z_mirror=False, 
@@ -1135,8 +1135,21 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
             
         self.mc_nchan = len(vchannels)
         self.noise_stddev = noise_stddev
-        if use_zeus: import zeus as sampler_id
-        else: import emcee as sampler_id
+        if use_zeus: 
+            import zeus as sampler_id
+            from zeus.callbacks import SaveProgressCallback
+        else: 
+            import emcee as sampler_id
+        
+        #prepare backends
+        if not use_zeus:
+            constbackkwarg = {'backend': backend}
+            runbackkwargs  = {'backend': backend}
+        elif use_zeus:
+            callback = SaveProgressCallback(filename="chain.h5", ncheck=10)
+            constbackkwarg = {}
+            runbackkwarg = {'callbacks': [callback]}
+            
             
         kwargs_model.update({'z_mirror': z_mirror})
         if z_mirror: 
@@ -1190,12 +1203,12 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                     pool.wait()
                     sys.exit(0)
                 
-                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model, moves=moves)                                                        
+                sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, kwargs=kwargs_model, moves=moves, **constbackkwarg)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
-                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune )
+                    sampler.run_mcmc(None, nsteps, progress=True, **runbackkwargs)
                 else:
-                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(p0, nsteps, progress=True,**runbackkwargs)
                 end = time.time()
                 multi_time = end - start
                 print("MPI multiprocessing took {0:.1f} seconds".format(multi_time))
@@ -1205,9 +1218,9 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
                 sampler = sampler_id.EnsembleSampler(nwalkers, ndim, self.ln_likelihood, pool=pool, backend=backend, kwargs=kwargs_model, moves=moves)                                                        
                 start = time.time()
                 if backend is not None and backend.iteration!=0:
-                    sampler.run_mcmc(None, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(None, nsteps, progress=True, **runbackkwargs)
                 else:
-                    sampler.run_mcmc(p0, nsteps, progress=True, tune=tune)
+                    sampler.run_mcmc(p0, nsteps, progress=True, **runbackkwargs)
                 end = time.time()
                 multi_time = end - start
                 print("Multiprocessing took {0:.1f} seconds".format(multi_time))
