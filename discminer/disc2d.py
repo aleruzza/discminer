@@ -1145,7 +1145,7 @@ class Model(Height, Velocity, Intensity, Linewidth, Lineslope, GridTools, Mcmc):
         #prepare backends
         if not use_zeus:
             constbackkwargs = {'backend': backend}
-            runbackkwargs  = {'backend': backend}
+            runbackkwargs  = {}
         elif use_zeus:
             callback = SaveProgressCallback(filename=name_back, ncheck=1)
             constbackkwargs = {}
